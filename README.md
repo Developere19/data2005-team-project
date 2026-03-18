@@ -26,3 +26,13 @@ Analyze electricity generation and consumption patterns in Ireland using open da
 
 ## Project Structure
 
+
+## Setup Instructions
+
+1. **Clone the repository:**
+
+```bash
+git clone https://github.com/Developere19/data2005-team-project.git
+cd data2005-team-project
+
+
