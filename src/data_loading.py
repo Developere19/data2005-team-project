@@ -38,3 +38,10 @@ def pivot_wide(df):
     wide_df.columns.name = None
     return wide_df.reset_index()
 
+def load_data(filepath):
+    """Runs all the loading and parsing steps in order."""
+    df = load_raw_csv(filepeth)
+    df = filter_aggregates(df)
+    df = parse_timestamps(df)
+    return pivot_wide(df)
+
