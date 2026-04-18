@@ -40,7 +40,7 @@ def pivot_wide(df):
 
 def load_data(filepath):
     """Runs all the loading and parsing steps in order."""
-    df = load_raw_csv(filepeth)
+    df = load_raw_csv(filepath)
     df = filter_aggregates(df)
     df = parse_timestamps(df)
     return pivot_wide(df)
