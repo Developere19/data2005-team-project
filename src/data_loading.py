@@ -17,3 +17,13 @@ def filter_aggregates(df):
     """Drops rows that are pre-aggregated daily totals."""
     return df[df["Time Bands"] != "All time periods"].copy()
 
+def parse_timestamps(df):
+    """Combines 'Day' and 'Time Bands' into a proper datetime column."""
+    # Extract the starting time from strings like '00:00 < 00:30'
+    start_time = df["Time Bands"].str.extract(r"(\d{2}:\d{2})\s*<")[0]
+    
+    datetime_str = df["Day"].str.strip() + " " + start_time.str.strip()
+    df["timestamp"] = pd.to_datetime(datetime_str, format="%Y %B %d %H:%M", errors="coerce")
+    
+    return df
+
