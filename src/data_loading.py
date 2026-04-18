@@ -27,3 +27,14 @@ def parse_timestamps(df):
     
     return df
 
+def pivot_wide(df):
+    """Reshapes data so each fuel type gets its own column."""
+    wide_df = df.pivot_table(
+        index="timestamp",
+        columns="Primary Fuel Output",
+        values="VALUE",
+        aggfunc="mean",
+    )
+    wide_df.columns.name = None
+    return wide_df.reset_index()
+
