@@ -12,3 +12,8 @@ def load_raw_csv(filepath):
     # Keep only the columns we actually need
     cols_to_keep = ["Day", "Time Bands", "Primary Fuel Output", "VALUE"]
     return raw_df[cols_to_keep].copy()
+
+def filter_aggregates(df):
+    """Drops rows that are pre-aggregated daily totals."""
+    return df[df["Time Bands"] != "All time periods"].copy()
+
