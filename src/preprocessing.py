@@ -85,3 +85,52 @@ def add_energy_mix(df):
     df["fossil_pct"] = np.where(total > 0, df["total_non_renewable"].to_numpy() / total * 100, np.nan)
     return df
 
+def normalise_and_detect_peaks(df):
+    """Scales fuel columns to a 0-1 range and detects periods of peak generation."""
+    skip_cols = {"timestamp", "season", "time_of_day", "is_weekend", "year", "month", "day_of_week", "hour"}
+    fuel_cols = [
+        c for c in df.columns
+        if c not in skip_cols and not c.endswith("_outlier") and not c.endswith("_norm")
+        and pd.api.types.is_numeric_dtype(df[c])
+    ]
+
+    values = df[fuel_cols].to_numpy(dtype=float)
+    col_min = values.min(axis=0)
+    col_max = values.max(axis=0)
+    val_range = np.where(col_max - col_min == 0, 1, col_max - col_min)
+
+    normed = (values - col_min) / val_range
+
+    for i, col in enumerate(fuel_cols):
+        df[f"{col}_norm"] = normed[:, i]
+
+    # Flag top 5% of generation as peak periods
+    if "total_generation" in df.columns:
+        peak_threshold = np.percentile(df["total_generation"].dropna(), 95)
+        df["is_peak_period"] = df["total_generation"] >= peak_threshold
+
+    # Save scaling params so we can reverse the process if needed
+    os.makedirs(PROCESSED_DIR, exist_ok=True)
+    params = {col: {"min": float(col_min[i]), "max": float(col_max[i])} for i, col in enumerate(fuel_cols)}
+    
+    with open(os.path.join(PROCESSED_DIR, "normalisation_params.json"), "w", encoding="utf-8") as f:
+        json.dump(params, f, indent=2)
+    return df
+
+def resample_and_summarize(df):
+    """Rolls up the half-hourly data into hourly, daily, and weekly views."""
+    skip_cols = {"timestamp", "season", "time_of_day", "is_weekend", "year", "month", "day_of_week", "hour"}
+    fuel_cols = [
+        c for c in df.columns
+        if c not in skip_cols and not c.endswith("_outlier") and not c.endswith("_norm") and c != "is_peak_period"
+    ]
+
+    df_ts = df.set_index("timestamp")[fuel_cols]
+    resampled_results = {}
+    
+    for freq, label in [("h", "hourly"), ("D", "daily"), ("W", "weekly")]:
+        resampled_results[label] = df_ts.resample(freq).sum().reset_index()
+        
+    return resampled_results
+
+
