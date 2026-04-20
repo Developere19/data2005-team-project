@@ -49,3 +49,39 @@ def detect_outliers(df):
     for i, col in enumerate(fuel_cols):
         df[f"{col}_outlier"] = is_outlier[:, i]
     return df
+
+def engineer_temporal_features(df):
+    """Extracts date/time features from the timestamp."""
+    ts = df["timestamp"]
+    df["year"] = ts.dt.year.astype(np.int16)
+    df["month"] = ts.dt.month.astype(np.int8)
+    df["day_of_week"] = ts.dt.dayofweek.astype(np.int8)
+    df["hour"] = ts.dt.hour.astype(np.int8)
+    df["is_weekend"] = ts.dt.dayofweek >= 5
+    df["season"] = df["month"].map(SEASON_MAP)
+    
+    df["time_of_day"] = pd.cut(
+        df["hour"],
+        bins=[-1, 5, 11, 17, 23],
+        labels=["Night", "Morning", "Afternoon", "Evening"]
+    ).astype(str)
+    return df
+
+def add_energy_mix(df):
+    """Calculates total generation and the percentage from renewable vs non-renewable sources."""
+    present_ren = [c for c in RENEWABLE_FUELS if c in df.columns]
+    present_foss = [c for c in NON_RENEWABLE_FUELS if c in df.columns]
+
+    ren_arr = df[present_ren].to_numpy(dtype=float)
+    foss_arr = df[present_foss].to_numpy(dtype=float)
+    
+    df["total_renewable"] = np.sum(ren_arr, axis=1)
+    df["total_non_renewable"] = np.sum(foss_arr, axis=1)
+    df["total_generation"] = df["total_renewable"] + df["total_non_renewable"]
+
+    total = df["total_generation"].to_numpy(dtype=float)
+    
+    df["renewable_pct"] = np.where(total > 0, df["total_renewable"].to_numpy() / total * 100, np.nan)
+    df["fossil_pct"] = np.where(total > 0, df["total_non_renewable"].to_numpy() / total * 100, np.nan)
+    return df
+
