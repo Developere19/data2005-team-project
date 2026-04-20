@@ -133,4 +133,19 @@ def resample_and_summarize(df):
         
     return resampled_results
 
+def export_data(df, resampled_data):
+    """Saves the final clean dataset and the rolled-up views to files."""
+    os.makedirs(PROCESSED_DIR, exist_ok=True)
+    
+    # Save main data as CSV
+    df.to_csv(os.path.join(PROCESSED_DIR, "electricity_clean.csv"), index=False)
+    
+    # Save main data as JSON
+    df_json = df.copy()
+    df_json["timestamp"] = df_json["timestamp"].astype(str)
+    df_json.to_json(os.path.join(PROCESSED_DIR, "electricity_clean.json"), orient="records", indent=2)
+
+    # Save summary data
+    for label, agg_df in resampled_data.items():
+        agg_df.to_csv(os.path.join(PROCESSED_DIR, f"{label}_generation.csv"), index=False)
 
