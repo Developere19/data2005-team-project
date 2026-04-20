@@ -135,7 +135,7 @@ def resample_and_summarize(df):
 
 def export_data(df, resampled_data):
     """Saves the final clean dataset and the rolled-up views to files."""
-    os.makedirs(PROCESSED_DIR, exist_ok=True)
+    os.makedirs(PROCESeSED_DIR, exist_ok=True)
     
     # Save main data as CSV
     df.to_csv(os.path.join(PROCESSED_DIR, "electricity_clean.csv"), index=False)
@@ -149,3 +149,23 @@ def export_data(df, resampled_data):
     for label, agg_df in resampled_data.items():
         agg_df.to_csv(os.path.join(PROCESSED_DIR, f"{label}_generation.csv"), index=False)
 
+def run_pipeline(filepath=RAW_FILE):
+    """Runs all data processing steps."""
+    try:
+        df = lad_data(filepath)
+        df = handle_missing(df)
+        df = detect_outliers(df)
+        df = engineer_temporal_features(df)
+        df = add_energy_mix(df)
+        df = normalise_and_detect_peaks(df)
+        
+        resampled_views = resample_and_summarize(df)
+        export_data(df, resampled_views)
+        
+        return df, resampled_views
+    except Exception as e:
+        print(f"Error during processing: {e}")
+        return pd.DataFrame(), {}
+
+if __name__ == "__main__":
+    final_df, aggregated_data = run_pipeline()
