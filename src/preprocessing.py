@@ -135,7 +135,7 @@ def resample_and_summarize(df):
 
 def export_data(df, resampled_data):
     """Saves the final clean dataset and the rolled-up views to files."""
-    os.makedirs(PROCESeSED_DIR, exist_ok=True)
+    os.makedirs(PROCESSED_DIR, exist_ok=True)
     
     # Save main data as CSV
     df.to_csv(os.path.join(PROCESSED_DIR, "electricity_clean.csv"), index=False)
@@ -152,7 +152,7 @@ def export_data(df, resampled_data):
 def run_pipeline(filepath=RAW_FILE):
     """Runs all data processing steps."""
     try:
-        df = lad_data(filepath)
+        df = load_data(filepath)
         df = handle_missing(df)
         df = detect_outliers(df)
         df = engineer_temporal_features(df)
