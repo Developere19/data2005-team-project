@@ -85,3 +85,16 @@ def calc_capacity_factor(df, capacities=CAPACITIES_MW):
 
     cf = data / (cap_vec * 0.5)  # 0.5 because data is half-hourly
     return pd.DataFrame(cf, columns=fuels).mean().sort_values(ascending=False)
+
+def zscore_fuels(df):
+    """
+    Standardizes each fuel to mean=0, std=1.
+    Broadcast: ((T, N) - (N,)) / (N,)
+    """
+    data = df[ALL_FUELS].to_numpy(dtype=float)
+    mu = data.mean(axis=0)
+    sigma = data.std(axis=0, ddof=1)
+    sigma[sigma == 0] = 1.0
+
+    z = (data - mu) / sigma
+    return pd.DataFrame(z, columns=ALL_FUELS, index=df["timestamp"])
