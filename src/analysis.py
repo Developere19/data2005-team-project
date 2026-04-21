@@ -20,4 +20,3 @@ CAPACITIES_MW = {
     "Biomass/Peat": 380, "Renewable Hydro": 530, "Oil": 200,
     "Waste": 80, "Pumped Storage Hydro": 292,
 }
-
