@@ -98,3 +98,15 @@ def zscore_fuels(df):
 
     z = (data - mu) / sigma
     return pd.DataFrame(z, columns=ALL_FUELS, index=df["timestamp"])
+
+def calc_fuel_shares(df):
+    """
+    Calculates each fuel's percentage share of generation per half-hour.
+    Broadcast: (T, N) MWh ÷ (T, 1) row totals -> (T, N) shares
+    """
+    data = df[ALL_FUELS].to_numpy(dtype=float)
+    row_totals = data.sum(axis=1, keepdims=True)
+    row_totals[row_totals == 0] = 1.0
+
+    shares = data / row_totals * 100
+    return pd.DataFrame(shares, columns=ALL_FUELS, index=df["timestamp"])
