@@ -37,3 +37,16 @@ def fuel_mix(df):
     out["category"] = np.where(out["fuel"].isin(RENEWABLE), "Renewable", "Fossil")
     return out
 
+def yearly_mix(df):
+    """Shows the shift between renewable and fossil generation over the years."""
+    g = df.groupby("year")
+    out = pd.DataFrame({
+        "renewable_mwh": g[RENEWABLE].sum().sum(axis=1),
+        "fossil_mwh": g[FOSSIL].sum().sum(axis=1),
+    })
+    out["renewable_pct"] = out["renewable_mwh"] / (out["renewable_mwh"] + out["fossil_mwh"]) * 100
+    out["fossil_pct"] = 100 - out["renewable_pct"]
+    return out.reset_index()
+
+
+
