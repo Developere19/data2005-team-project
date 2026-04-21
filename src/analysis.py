@@ -110,3 +110,38 @@ def calc_fuel_shares(df):
 
     shares = data / row_totals * 100
     return pd.DataFrame(shares, columns=ALL_FUELS, index=df["timestamp"])
+
+if __name__ == "__main__":
+    print("Running analysis pipeline...")
+    df, _ = run_pipeline()
+
+    if df.empty:
+        print("Failed to load data. Exiting analysis.")
+        exit()
+
+    h = get_headline_stats(df)
+    print("\n=== HEADLINE STATS ===")
+    print(f"Top Fuel Source: {h['top_fuel']} ({h['top_share_pct']}%)")
+    print(f"Renewable Mix:   {h['renewable_pct']}%")
+    print(f"Fossil Mix:      {h['fossil_pct']}%")
+    print(f"Total Energy:    {h['total_twh']} TWh")
+
+    print("\n--- Overall Fuel Mix ---")
+    print(fuel_mix(df).to_string(index=False))
+
+    print("\n--- Yearly Trend ---")
+    print(yearly_mix(df).round(1).to_string(index=False))
+
+    print("\n--- Seasonal Averages (MWh per half-hour) ---")
+    print(seasonal_profile(df).round(1))
+
+    print("\n=== BROADCASTING DEMOS ===")
+    print("\nMean Capacity Factor per fuel:")
+    print(calc_capacity_factor(df).round(3))
+
+    print("\nZ-score sanity check (Wind):")
+    z = zscore_fuels(df)
+    print(f"Mean: {z['Wind'].mean():.4f}, Std: {z['Wind'].std():.4f}")
+
+    print("\nAverage fuel share per half-hour:")
+    print(calc_fuel_shares(df).mean().round(2).sort_values(ascending=False))
