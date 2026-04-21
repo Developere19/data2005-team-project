@@ -63,9 +63,8 @@ def correlations(df):
 
 def get_headline_stats(df):
     """Generates a high-level summary of the dataset."""
-    mix = fuelmix(df)
-
-    renew = mix.loc[mix["category"] == "Renewable", "share_pctt"].sum()
+    mix = fuel_mix(df)
+    renew = mix.loc[mix["category"] == "Renewable", "share_pct"].sum()
 
     return {
         "top_fuel": str(mix.iloc[0]["fuel"]),
