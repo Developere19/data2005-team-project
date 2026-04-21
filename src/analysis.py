@@ -48,5 +48,12 @@ def yearly_mix(df):
     out["fossil_pct"] = 100 - out["renewable_pct"]
     return out.reset_index()
 
+def hourly_profile(df):
+    """Calculates average MWh per fuel by hour of the day."""
+    return df.groupby("hour")[ALL_FUELS].mean()
 
+def seasonal_profile(df):
+    """Calculates average MWh per fuel by season."""
+    order = ["Winter", "Spring", "Summer", "Autumn"]
+    return df.groupby("season")[ALL_FUELS].mean().reindex(order)
 
