@@ -57,3 +57,7 @@ def seasonal_profile(df):
     order = ["Winter", "Spring", "Summer", "Autumn"]
     return df.groupby("season")[ALL_FUELS].mean().reindex(order)
 
+def correlations(df):
+    """Finds correlations between different fuel sources."""
+    return df[ALL_FUELS].corr()
+
