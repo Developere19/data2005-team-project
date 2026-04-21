@@ -73,3 +73,15 @@ def get_headline_stats(df):
         "fossil_pct": float(round(100 - renew, 1)),
         "total_twh": float(round(mix["total_mwh"].sum() / 1_000_000, 1)),
     }
+
+def calc_capacity_factor(df, capacities=CAPACITIES_MW):
+    """
+    Shows how hard each fuel works vs its capacity.
+    Broadcast: (T, N) MWh matrix ÷ (N,) capacity vector -> (T, N) factor matrix
+    """
+    fuels = [f for f in capacities if f in df.columns]
+    data = df[fuels].to_numpy(dtype=float)
+    cap_vec = np.array([capacities[f] for f in fuels])
+
+    cf = data / (cap_vec * 0.5)  # 0.5 because data is half-hourly
+    return pd.DataFrame(cf, columns=fuels).mean().sort_values(ascending=False)
