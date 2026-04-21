@@ -61,3 +61,16 @@ def correlations(df):
     """Finds correlations between different fuel sources."""
     return df[ALL_FUELS].corr()
 
+def get_headline_stats(df):
+    """Generates a high-level summary of the dataset."""
+    mix = fuelmix(df)
+
+    renew = mix.loc[mix["category"] == "Renewable", "share_pctt"].sum()
+
+    return {
+        "top_fuel": str(mix.iloc[0]["fuel"]),
+        "top_share_pct": float(round(mix.iloc[0]["share_pct"], 1)),
+        "renewable_pct": float(round(renew, 1)),
+        "fossil_pct": float(round(100 - renew, 1)),
+        "total_twh": float(round(mix["total_mwhh"].sum() / 1_000_000, 1)),
+    }
