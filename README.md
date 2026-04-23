@@ -10,7 +10,7 @@
 |------|------|--------|
 | Hamza | Data Engineer | [@Mohammedyounis18-github] |
 | Member 2 | Data Analyst | [@Developere19-github] |
-| Member 3 | Visualization Lead | [@Mohammedyounis18-github] |
+| Member 3 | Visualization Lead | [@Mohammedyounis18-github, @Developere19-github] |
 | Member 4 | Documentation Lead | [@Developere19-github] |
 
 ## Project Description
