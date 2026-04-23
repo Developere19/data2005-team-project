@@ -77,3 +77,17 @@ def plot_yearly_trend(df_in):
     ax.yaxis.set_major_formatter(mtick.PercentFormatter(decimals=0))
     ax.legend(loc="center right")
     _save(fig, "2_yearly_trend.png")
+
+def plot_hourly_profile(df_in):
+    hp = hourly_profile(df_in)
+    top4 = fuel_mix(df_in).head(4)["fuel"].tolist()
+    fig, ax = plt.subplots(figsize=(12, 7))
+    for fuel in top4:
+        ax.plot(hp.index, hp[fuel], marker="o", linewidth=2.5,
+                label=fuel, color=FUEL_COLOURS.get(fuel, "#444"))
+    _style(ax, "Average Generation by Hour of Day",
+           "Gas ramps up during the evening peak, wind stays roughly flat")
+    ax.set(xlabel="Hour of day", ylabel="Average MWh per half-hour")
+    ax.set_xticks(range(0, 24, 2))
+    ax.legend(loc="lower center", ncol=4, bbox_to_anchor=(0.5, -0.22))
+    _save(fig, "3_hourly_profile.png")
