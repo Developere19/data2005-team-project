@@ -40,3 +40,19 @@ def _save(fig, name):
     fig.savefig(path, dpi=150, bbox_inches="tight", facecolor="white")
     print(f"Saved: {path}")
     plt.close(fig)
+
+
+def plot_fuel_mix(df_in):
+    mix = fuel_mix(df_in)
+    fig, ax = plt.subplots(figsize=(12, 7))
+    sns.barplot(data=mix, x="share_pct", y="fuel", hue="category",
+                palette=CAT_COLOURS, ax=ax, dodge=False)
+    for i, row in mix.iterrows():
+        ax.text(row["share_pct"] + 0.4, i, f"{row['share_pct']:.1f}%",
+                va="center", fontsize=11, color="#333")
+    _style(ax, "Ireland's Electricity Mix (2020-2023)",
+           "Gas and Wind together supply 83% of Ireland's electricity")
+    ax.set(xlabel="Share of total generation (%)", ylabel="",
+           xlim=(0, mix["share_pct"].max() * 1.15))
+    ax.legend(title="", loc="lower right")
+    _save(fig, "1_fuel_mix.png")
