@@ -23,3 +23,20 @@ FUEL_COLOURS = {
 CAT_COLOURS = {"Renewable": "#27AE60", "Fossil": "#C0392B"}
 
 sns.set_theme(style="whitegrid", context="talk")
+
+
+def _style(ax, title, subtitle):
+    """Applies title and subtitle styling."""
+    ax.set_title(title, fontsize=17, pad=32)
+    ax.text(0.5, 1.12, subtitle, transform=ax.transAxes, ha="center",
+            fontsize=11, style="italic", color="#555")
+
+
+def _save(fig, name):
+    """Adds a source footer and saves the figure."""
+    os.makedirs(FIG_DIR, exist_ok=True)
+    fig.text(0.01, 0.005, SOURCE, fontsize=9, style="italic", color="#555")
+    path = os.path.join(FIG_DIR, name)
+    fig.savefig(path, dpi=150, bbox_inches="tight", facecolor="white")
+    print(f"Saved: {path}")
+    plt.close(fig)
