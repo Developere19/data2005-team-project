@@ -56,3 +56,24 @@ def plot_fuel_mix(df_in):
            xlim=(0, mix["share_pct"].max() * 1.15))
     ax.legend(title="", loc="lower right")
     _save(fig, "1_fuel_mix.png")
+
+
+def plot_yearly_trend(df_in):
+    yr = yearly_mix(df_in)
+    fig, ax = plt.subplots(figsize=(11, 7))
+    for col, cat, offset in [("renewable_pct", "Renewable", 12),
+                              ("fossil_pct", "Fossil", -20)]:
+        ax.plot(yr["year"], yr[col], marker="o", markersize=11, linewidth=3,
+                label=cat, color=CAT_COLOURS[cat])
+        for _, r in yr.iterrows():
+            ax.annotate(f"{r[col]:.1f}%", (r["year"], r[col]),
+                        textcoords="offset points", xytext=(0, offset),
+                        ha="center", fontsize=11, fontweight="bold",
+                        color=CAT_COLOURS[cat])
+    _style(ax, "Renewable vs Fossil Share by Year",
+           "2023 is Ireland's greenest year on record at 45% renewable")
+    ax.set(xlabel="Year", ylabel="Share of generation (%)", ylim=(0, 80))
+    ax.set_xticks(yr["year"])
+    ax.yaxis.set_major_formatter(mtick.PercentFormatter(decimals=0))
+    ax.legend(loc="center right")
+    _save(fig, "2_yearly_trend.png")
