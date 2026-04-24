@@ -91,3 +91,18 @@ def plot_hourly_profile(df_in):
     ax.set_xticks(range(0, 24, 2))
     ax.legend(loc="lower center", ncol=4, bbox_to_anchor=(0.5, -0.22))
     _save(fig, "3_hourly_profile.png")
+
+def plot_seasonal(df_in):
+    top4 = fuel_mix(df_in).head(4)["fuel"].tolist()
+    long = seasonal_profile(df_in).reset_index().melt(
+        id_vars="season", value_vars=top4, var_name="fuel", value_name="avg_mwh")
+    fig, ax = plt.subplots(figsize=(12, 7))
+    sns.barplot(data=long, x="season", y="avg_mwh", hue="fuel", ax=ax,
+                palette=[FUEL_COLOURS.get(f, "#444") for f in top4])
+    for c in ax.containers:
+        ax.bar_label(c, fmt="%.0f", padding=3, fontsize=9, color="#333")
+    _style(ax, "Seasonal Generation Patterns",
+           "Wind halves from winter to summer; gas output rises to compensate")
+    ax.set(xlabel="", ylabel="Average MWh per half-hour")
+    ax.legend(title="", loc="upper right")
+    _save(fig, "4_seasonal.png")
