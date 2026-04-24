@@ -124,3 +124,19 @@ def plot_correlation_heatmap(df_in):
     plt.xticks(rotation=45, ha="right")
     plt.yticks(rotation=0)
     _save(fig, "5_correlation.png")
+
+def plot_renewable_distribution(df_in):
+    data = df_in["renewable_pct"].dropna()
+    pct_above = (data >= 50).mean() * 100
+    fig, ax = plt.subplots(figsize=(11, 7))
+    sns.histplot(data, bins=40, color=CAT_COLOURS["Renewable"],
+                 edgecolor="white", ax=ax)
+    ax.axvline(50, color="black", linestyle="--", linewidth=2)
+    ax.text(51, ax.get_ylim()[1] * 0.9,
+            f"50% renewable\n{pct_above:.1f}% of half-hours above", fontsize=11)
+    _style(ax, "How Often Does Ireland Run on Renewables?",
+           f"Ireland runs on >=50% renewables {pct_above:.0f}% of the time")
+    ax.set(xlabel="Renewable share of generation (%)",
+           ylabel="Number of half-hours")
+    ax.xaxis.set_major_formatter(mtick.PercentFormatter(decimals=0))
+    _save(fig, "6_renewable_distribution.png")
