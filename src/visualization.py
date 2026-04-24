@@ -141,8 +141,19 @@ def plot_renewable_distribution(df_in):
     ax.xaxis.set_major_formatter(mtick.PercentFormatter(decimals=0))
     _save(fig, "6_renewable_distribution.png")
 
-def make_all_plots(df_in):
+def make_all_plots(d_in):
     for fn in [plot_fuel_mix, plot_yearly_trend, plot_hourly_profile,
                plot_seasonal, plot_correlation_heatmap,
                plot_renewable_distribution]:
         fn(df_in)
+
+
+if __name__ == "__main__":
+    print("Running pipeline...")
+    final_df, _ = run_pipeline()
+    if final_df.empty:
+        print("Pipeline failed. Cannot plot.")
+    else:
+        print("Building charts...\n")
+        make_all_plots(final_df)
+        print(f"\nDone! Charts saved in: {FIG_DIR}/")
