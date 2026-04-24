@@ -141,7 +141,7 @@ def plot_renewable_distribution(df_in):
     ax.xaxis.set_major_formatter(mtick.PercentFormatter(decimals=0))
     _save(fig, "6_renewable_distribution.png")
 
-def make_all_plots(d_in):
+def make_all_plots(df_in):
     for fn in [plot_fuel_mix, plot_yearly_trend, plot_hourly_profile,
                plot_seasonal, plot_correlation_heatmap,
                plot_renewable_distribution]:
