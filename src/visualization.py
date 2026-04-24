@@ -106,3 +106,21 @@ def plot_seasonal(df_in):
     ax.set(xlabel="", ylabel="Average MWh per half-hour")
     ax.legend(title="", loc="upper right")
     _save(fig, "4_seasonal.png")
+
+def plot_correlation_heatmap(df_in):
+    corr = correlations(df_in)
+    fig, ax = plt.subplots(figsize=(13, 11))
+    sns.heatmap(corr, annot=True, fmt=".2f", cmap="RdBu_r", center=0,
+                vmin=-1, vmax=1, square=True, annot_kws={"size": 10},
+                cbar_kws={"label": "Correlation", "shrink": 0.7}, ax=ax)
+    fuels = list(corr.columns)
+    if "Wind" in fuels and "Gas" in fuels:
+        gi, wi = fuels.index("Gas"), fuels.index("Wind")
+        for x, y in [(gi, wi), (wi, gi)]:
+            ax.add_patch(mpatches.Rectangle((x, y), 1, 1, fill=False,
+                                             edgecolor="black", lw=3))
+    _style(ax, "How Fuels Move Together",
+           "Wind and Gas are strongly negatively correlated (-0.73) - gas backs up wind")
+    plt.xticks(rotation=45, ha="right")
+    plt.yticks(rotation=0)
+    _save(fig, "5_correlation.png")
