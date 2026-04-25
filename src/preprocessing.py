@@ -5,7 +5,7 @@ import pandas as pd
 from data_loader import load_data
 
 # Constants
-RAW_FILE = r"C:\Users\Mohammedrog\PycharmProjects\PythonProject1\dcp2\MEG01.20260408163129.csv"
+RAW_FILE = r"data/raw/MEG01.csv"
 PROCESSED_DIR = os.path.join("data", "processed")
 
 RENEWABLE_FUELS = [
