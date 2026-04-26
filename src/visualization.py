@@ -4,12 +4,15 @@ import matplotlib.ticker as mtick
 import matplotlib.patches as mpatches
 import seaborn as sns
 
-from data_processing import run_pipeline
+from preprocessing import run_pipeline
 from analysis import (fuel_mix, yearly_mix, hourly_profile,
                       seasonal_profile, correlations)
 
-# Path to save generated charts
-FIG_DIR = os.path.join("outputs", "figures")
+# Calculate the absolute path to the project root
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Path to save generated charts relative to the project root
+FIG_DIR = os.path.join(BASE_DIR, "outputs", "figures")
 SOURCE = "Source: CSO MEG01 - Metered Electricity Generation (2020-2023)"
 
 # Color scheme for consistent visualization across charts
