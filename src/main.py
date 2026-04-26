@@ -36,7 +36,9 @@ def main():
 
     print("\nGenerating visualisations...")
     make_all_plots(df)
-    print("\nDone! Visualisations saved to 'outputs/figures' folder.")
+    
+    fig_dir = os.path.join(BASE_DIR, 'outputs', 'figures')
+    print(f"\nDone! Visualisations saved to '{fig_dir}' folder.")
 
 
 if __name__ == "__main__":
