@@ -1,9 +1,11 @@
 import os
-from data_processing import run_pipeline
+from preprocessing import run_pipeline
 from analysis import get_headline_stats
-from visualisation import make_all_plots
+from visualization import make_all_plots
 
-RAW_FILE = "MEG01.20260408163129.csv"
+# Calculate the path relative to the script location for robust execution
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+RAW_FILE = os.path.join(BASE_DIR, "data", "raw", "MEG01.csv")
 
 def main():
     if not os.path.exists(RAW_FILE):
