@@ -35,3 +35,7 @@ def main():
     print("\nGenerating visualisations...")
     make_all_plots(df)
     print("\nDone! Visualisations saved to 'outputs/figures' folder.")
+
+
+if __name__ == "__main__":
+    main()
