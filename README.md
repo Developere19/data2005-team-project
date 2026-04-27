@@ -29,6 +29,7 @@ Analysis of Ireland's electricity generation mix from 2020 to 2023 using half-ho
 
 ## Project Structure
 
+```
 data2005-team-project/
 ├── data/
 │   ├── raw/                    # Original dataset (MEG01.csv)
@@ -44,7 +45,7 @@ data2005-team-project/
 │   └── reports/                # Processed data exports
 ├── requirements.txt            # Project dependencies
 └── README.md                   # This file
-
+```
 ## Setup Instructions
 
 1. **Clone the repository:**
@@ -78,6 +79,7 @@ Install with pip install -r requirements.txt
 
 ## Pipeline Architecture
 
+```
 MEG01.csv
     │
     ▼
@@ -91,4 +93,4 @@ analysis.py          → fuel mix, trends, correlations, NumPy broadcasting
     │
     ▼
 visualization.py     → 6 Seaborn charts saved to outputs/figures/
-
+```
