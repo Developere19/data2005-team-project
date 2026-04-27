@@ -60,13 +60,14 @@ pip install -r requirements.txt
 ```
 3. **Add the dataset**
 Place the raw CSV file in the data/raw/ folder and name it MEG01.csv
-
-
+```
 data/raw/MEG01.csv
+```
 
 4. **Run the full pipeline**
+```
 python src/main.py
-
+```
 This will run the four files automatically step by step.
 
 ## Dependencies
