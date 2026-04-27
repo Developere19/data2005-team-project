@@ -19,6 +19,14 @@
 
 Analysis of Ireland's electricity generation mix from 2020 to 2023 using half-hourly CSO data. The project builds a full data pipeline - loading, cleaning, analysing, and visualising - to answer the research question of where Ireland gets its electricity from.
 
+**Key Findings:**
+```
+Gas is Ireland's largest source at 47.1%, followed by Wind at 36.4%
+Gas and Wind together supply 83% of all electricity generated
+Ireland is 41% renewable overall, with 2023 being the greenest year on record at 45%
+Wind and Gas have a strong negative correlation of −0.73 — gas acts as the backup when wind drops
+```
+
 ## Dataset
 
 - **Name:** MEG01 - Metered Electricity Generation  
