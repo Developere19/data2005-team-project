@@ -12,7 +12,7 @@ from analysis import (fuel_mix, yearly_mix, hourly_profile,
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Path to save generated charts relative to the project root
-FIG_DIR = os.path.join(BASE_DIR, "data", "processed", "charts")
+FIG_DIR = os.path.join(BASE_DIR, "outputs", "figures")
 SOURCE = "Source: CSO MEG01 - Metered Electricity Generation (2020-2023)"
 
 # Color scheme for consistent visualization across charts
