@@ -50,16 +50,17 @@ data2005-team-project/
 
 1. **Clone the repository:**
 
-
+```
 git clone https://github.com/Developere19/data2005-team-project.git
 cd data2005-team-project
-
+```
 2. **Install Dependencies**
-
+```
 pip install -r requirements.txt
-
+```
 3. **Add the dataset**
 Place the raw CSV file in the data/raw/ folder and name it MEG01.csv
+
 
 data/raw/MEG01.csv
 
