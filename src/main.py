@@ -1,4 +1,5 @@
 import os
+os.chdir(os.path.join(os.path.dirname(__file__), ".."))
 from preprocessing import run_pipeline
 from analysis import get_headline_stats
 from visualization import make_all_plots
