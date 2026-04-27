@@ -1,5 +1,5 @@
 import os
-os.chdir(os.path.join(os.path.dirname(__file__), ".."))
+os.chdir(os.path.join(os.path.dirname(__file__), "..")) # Move working directory to project root (one level above src/)
 from preprocessing import run_pipeline
 from analysis import get_headline_stats
 from visualization import make_all_plots
