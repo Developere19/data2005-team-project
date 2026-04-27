@@ -69,11 +69,12 @@ python src/main.py
 This will run the four files automatically step by step.
 
 ## Dependencies
-
+```
 pandas
 numpy
 matplotlib
 seaborn
+```
 
 Install with pip install -r requirements.txt
 
