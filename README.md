@@ -78,6 +78,27 @@ python src/main.py
 ```
 This will run the four files automatically step by step.
 
+##Output Files
+After running main.py, the following files are created:
+ 
+```
+File                            Location                    Description
+electricity_clean.csv        data/processed/           Full cleaned dataset
+electricity_clean.json       data/processed/           Same data in JSON format
+hourly_generation.csv        data/processed/           Data resampled to hourly
+daily_generation.csv         data/processed/           Data resampled to daily
+weekly_generation.csv        data/processed/           Data resampled to weekly
+normalisation_params.json    data/processed/          Min/max scaling values used to normalise each fuel column
+```
+```
+File                                    Location                    Description
+1_fuel_mix.png                       outputs/figures/            Fuel share bar chart
+2_yearly_trend.png                   outputs/figures/            Renewable vs fossil trend
+3_hourly_profile.png                 outputs/figures/            Daily generation pattern
+4_seasonal.png                       outputs/figures/            Seasonal breakdown
+5_correlation.png                    outputs/figures/            Fuel correlation heatmap
+6_renewable_distribution.png         outputs/figures/            Renewable share histogram
+```
 ## Dependencies
 ```
 pandas
