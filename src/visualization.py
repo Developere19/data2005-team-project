@@ -64,7 +64,7 @@ def plot_fuel_mix(df_in):
         ax.text(row["share_pct"] + 0.4, i, f"{row['share_pct']:.1f}%",
                 va="center", fontsize=11, color="#333")
                 
-    _style(ax, "Ireland's Electricity Mix (2020-2023)",
+    _style(ax, "Ireland's Electricity Mix (2020 - 2023)",
            "Gas and Wind together supply 83% of Ireland's electricity")
            
     # Extend x-axis slightly to make room for text labels
