@@ -182,7 +182,7 @@ def plot_renewable_distribution(df_in):
     ax.set(xlabel="Renewable share of generation (%)",
            ylabel="Number of half-hours")
     ax.xaxis.set_major_formatter(mtick.PercentFormatter(decimals=0))
-    _save(fig, "6_renewable_distribution.png")
+    _save(fig, "5_renewable_distribution.png")
 
 
 def make_all_plots(df_in):
