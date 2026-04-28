@@ -1,7 +1,7 @@
 import os
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
-import matplotlib.patches as mpatches
+import matplotlib.patches as mpatch
 import seaborn as sns
 
 from preprocessing import run_pipeline
@@ -156,34 +156,6 @@ def plot_seasonal(df_in):
     _save(fig, "4_seasonal.png")
 
 
-def plot_correlation_heatmap(df_in):
-    """Plots a heatmap showing the correlation between generation from different fuels."""
-    # Get the correlation matrix
-    corr = correlations(df_in)
-    fig, ax = plt.subplots(figsize=(13, 11))
-    
-    # Create a heatmap with a diverging colormap (blue for positive, red for negative)
-    sns.heatmap(corr, annot=True, fmt=".2f", cmap="RdBu_r", center=0,
-                vmin=-1, vmax=1, square=True, annot_kws={"size": 10},
-                cbar_kws={"label": "Correlation", "shrink": 0.7}, ax=ax)
-                
-    # Highlight the strong negative correlation between Wind and Gas
-    fuels = list(corr.columns)
-    if "Wind" in fuels and "Gas" in fuels:
-        gi, wi = fuels.index("Gas"), fuels.index("Wind")
-        for x, y in [(gi, wi), (wi, gi)]:
-            # Add a black box around the Gas-Wind intersection
-            ax.add_patch(mpatches.Rectangle((x, y), 1, 1, fill=False,
-                                             edgecolor="black", lw=3))
-                                             
-    _style(ax, "How Fuels Move Together",
-           "Wind and Gas are strongly negatively correlated (-0.73) - gas backs up wind")
-           
-    # Rotate labels for readability
-    plt.xticks(rotation=45, ha="right")
-    plt.yticks(rotation=0)
-    _save(fig, "5_correlation.png")
-
 
 def plot_renewable_distribution(df_in):
     """Plots a histogram of the renewable generation share."""
@@ -216,8 +188,7 @@ def plot_renewable_distribution(df_in):
 def make_all_plots(df_in):
     """Generates all visualizations and saves them to the output directory."""
     for fn in [plot_fuel_mix, plot_yearly_trend, plot_hourly_profile,
-               plot_seasonal, plot_correlation_heatmap,
-               plot_renewable_distribution]:
+               plot_seasonal, plot_renewable_distribution]:
         fn(df_in)
 
 
