@@ -1,21 +1,21 @@
+# Standard library and third-party visualization imports
 import os
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib.patches as mpatch
 import seaborn as sns
 
+# Internal project imports for data processing and analysis
 from preprocessing import run_pipeline
 from analysis import (fuel_mix, yearly_mix, hourly_profile,
                       seasonal_profile, correlations)
 
-# Calculate the absolute path to the project root
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-# Path to save generated charts relative to the project root
-FIG_DIR = os.path.join(BASE_DIR, "outputs", "figures")
+# File system constants
+FIG_DIR = os.path.join("outputs", "figures")
 SOURCE = "Source: CSO MEG01 - Metered Electricity Generation (2020-2023)"
 
-# Color scheme for consistent visualization across charts
+# Brand-aligned color palette for specific fuels and categories
+# Using hex codes ensures consistency across different operating systems/browsers
 FUEL_COLOURS = {
     "Wind": "#5DADE2", "Solar": "#F4D03F", "Renewable Hydro": "#1ABC9C",
     "Gas": "#E67E22", "Coal": "#4A4A4A", "Oil": "#7D3C98",
@@ -29,22 +29,27 @@ sns.set_theme(style="whitegrid", context="talk")
 
 def _style(ax, title, subtitle):
     """Applies title and subtitle styling."""
+    # Main title with padding to prevent overlap with the subtitle
     ax.set_title(title, fontsize=17, pad=32)
     # Add a slightly smaller, italicized subtitle below the main title
+    # transform=ax.transAxes allows us to position text relative to the axes (0 to 1)
     ax.text(0.5, 1.12, subtitle, transform=ax.transAxes, ha="center",
             fontsize=11, style="italic", color="#555")
 
 
 def _save(fig, name):
     """Adds a source footer and saves the figure."""
+    # Ensure directory exists to prevent FileNotFoundError
     os.makedirs(FIG_DIR, exist_ok=True)
     
     # Add a consistent source credit to the bottom left of every chart
     fig.text(0.01, 0.005, SOURCE, fontsize=9, style="italic", color="#555")
     
     path = os.path.join(FIG_DIR, name)
+    # dpi=150 provides a good balance between file size and high-resolution clarity
+    # bbox_inches="tight" ensures no labels are cut off in the final image
     fig.savefig(path, dpi=150, bbox_inches="tight", facecolor="white")
-    plt.close(fig)
+    plt.close(fig) # Free up memory by closing the figure after saving
 
 
 # --- Charts ---
@@ -55,7 +60,7 @@ def plot_fuel_mix(df_in):
     mix = fuel_mix(df_in)
     fig, ax = plt.subplots(figsize=(12, 7))
     
-    # Create a horizontal bar chart
+    # Create a horizontal bar chart. dodge=False keeps bars centered when using 'hue'
     sns.barplot(data=mix, x="share_pct", y="fuel", hue="category",
                 palette=CAT_COLOURS, ax=ax, dodge=False)
                 
@@ -86,7 +91,9 @@ def plot_yearly_trend(df_in):
         ax.plot(yr["year"], yr[col], marker="o", markersize=11, linewidth=3,
                 label=cat, color=CAT_COLOURS[cat])
                 
-        # Annotate each data point with its percentage
+        # Annotate each data point. 
+        # textcoords="offset points" allows us to nudge text away from the marker 
+        # using the 'offset' variable defined in the loop above.
         for _, r in yr.iterrows():
             ax.annotate(f"{r[col]:.1f}%", (r["year"], r[col]),
                         textcoords="offset points", xytext=(0, offset),
@@ -135,13 +142,13 @@ def plot_seasonal(df_in):
     # Get the top 4 fuels
     top4 = fuel_mix(df_in).head(4)["fuel"].tolist()
     
-    # Reshape the data to a 'long' format suitable for Seaborn
+    # Seaborn works best with 'Long-form' data where each row is a single observation
     long = seasonal_profile(df_in).reset_index().melt(
         id_vars="season", value_vars=top4, var_name="fuel", value_name="avg_mwh")
         
     fig, ax = plt.subplots(figsize=(12, 7))
     
-    # Create grouped bar chart
+    # List comprehension used to map colors to the specific fuels present in the data
     sns.barplot(data=long, x="season", y="avg_mwh", hue="fuel", ax=ax,
                 palette=[FUEL_COLOURS.get(f, "#444") for f in top4])
                 
@@ -171,7 +178,7 @@ def plot_renewable_distribution(df_in):
     sns.histplot(data, bins=40, color=CAT_COLOURS["Renewable"],
                  edgecolor="white", ax=ax)
                  
-    # Draw a dashed line at the 50% mark
+    # Draw a vertical dashed line at the 50% threshold for visual reference
     ax.axvline(50, color="black", linestyle="--", linewidth=2)
     ax.text(51, ax.get_ylim()[1] * 0.9,
             f"50% renewable\n{pct_above:.1f}% of half-hours above", fontsize=11)
@@ -193,6 +200,7 @@ def make_all_plots(df_in):
 
 
 if __name__ == "__main__":
+    # Entry point: Load the processed data and trigger the visualization suite
     print("Running pipeline...")
     final_df, _ = run_pipeline()
     if final_df.empty:
