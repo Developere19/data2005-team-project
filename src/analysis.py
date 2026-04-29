@@ -30,22 +30,22 @@ def fuel_mix(df):
     """Calculates total MWh and % share per fuel."""
     totals = df[ALL_FUELS].sum()
     out = pd.DataFrame({
-        "fuel": totals.index,
-        "total_mwh": totals.values,
-        "share_pct": totals.values / totals.sum() * 100,
-    }).sort_values("share_pct", ascending=False).reset_index(drop=True)
-    out["category"] = np.where(out["fuel"].isin(RENEWABLE), "Renewable", "Fossil")
+        "fuel": totals.index, #fuel names become columns
+        "total_mwh": totals.values,  # raw MWh per fuel
+        "share_pct": totals.values / totals.sum() * 100, # each fuel as % of grand total
+    }).sort_values("share_pct", ascending=False).reset_index(drop=True) # rank highest % first
+    out["category"] = np.where(out["fuel"].isin(RENEWABLE), "Renewable", "Fossil")  # label each fuel as Renewable or Fossil
     return out
 
 def yearly_mix(df):
     """Shows the shift between renewable and fossil generation over the years."""
-    g = df.groupby("year")
+    g = df.groupby("year") # group by year
     out = pd.DataFrame({
-        "renewable_mwh": g[RENEWABLE].sum().sum(axis=1),
-        "fossil_mwh": g[FOSSIL].sum().sum(axis=1),
+        "renewable_mwh": g[RENEWABLE].sum().sum(axis=1), # total renewable MWh per year
+        "fossil_mwh": g[FOSSIL].sum().sum(axis=1), # total fossil MWh per year
     })
-    out["renewable_pct"] = out["renewable_mwh"] / (out["renewable_mwh"] + out["fossil_mwh"]) * 100
-    out["fossil_pct"] = 100 - out["renewable_pct"]
+    out["renewable_pct"] = out["renewable_mwh"] / (out["renewable_mwh"] + out["fossil_mwh"]) * 100 # renewable as % of total per year
+    out["fossil_pct"] = 100 - out["renewable_pct"] # fossil is whatever is left
     return out.reset_index()
 
 def hourly_profile(df):
@@ -67,11 +67,11 @@ def get_headline_stats(df):
     renew = mix.loc[mix["category"] == "Renewable", "share_pct"].sum()
 
     return {
-        "top_fuel": str(mix.iloc[0]["fuel"]),
-        "top_share_pct": float(round(mix.iloc[0]["share_pct"], 1)),
-        "renewable_pct": float(round(renew, 1)),
-        "fossil_pct": float(round(100 - renew, 1)),
-        "total_twh": float(round(mix["total_mwh"].sum() / 1_000_000, 1)),
+        "top_fuel": str(mix.iloc[0]["fuel"]), # name of the highest ranked fuel (Gas)
+        "top_share_pct": float(round(mix.iloc[0]["share_pct"], 1)), # its % share rounded to 1 decimal
+        "renewable_pct": float(round(renew, 1)), # total renewable share %
+        "fossil_pct": float(round(100 - renew, 1)),     # total fossil share % (remainder)
+        "total_twh": float(round(mix["total_mwh"].sum() / 1_000_000, 1)), # convert MWh to TWh
     }
 
 def calc_capacity_factor(df, capacities=CAPACITIES_MW):
@@ -79,9 +79,9 @@ def calc_capacity_factor(df, capacities=CAPACITIES_MW):
     Shows how hard each fuel works vs its capacity.
     Broadcast: (T, N) MWh matrix ÷ (N,) capacity vector -> (T, N) factor matrix
     """
-    fuels = [f for f in capacities if f in df.columns]
-    data = df[fuels].to_numpy(dtype=float)
-    cap_vec = np.array([capacities[f] for f in fuels])
+    fuels = [f for f in capacities if f in df.columns] # only keep fuels that exist in both the data and the capacity dictionary
+    data = df[fuels].to_numpy(dtype=float) # convert fuel columns to a NumPy matrix (T rows x N fuels)
+    cap_vec = np.array([capacities[f] for f in fuels]) # build a capacity vector (N,) one value per fuel
 
     cf = data / (cap_vec * 0.5)  # 0.5 because data is half-hourly
     return pd.DataFrame(cf, columns=fuels).mean().sort_values(ascending=False)
@@ -91,10 +91,10 @@ def zscore_fuels(df):
     Standardizes each fuel to mean=0, std=1.
     Broadcast: ((T, N) - (N,)) / (N,)
     """
-    data = df[ALL_FUELS].to_numpy(dtype=float)
-    mu = data.mean(axis=0)
-    sigma = data.std(axis=0, ddof=1)
-    sigma[sigma == 0] = 1.0
+    data = df[ALL_FUELS].to_numpy(dtype=float) # convert all fuel columns to a NumPy matrix (T rows x N fuels)
+    mu = data.mean(axis=0) # calculate the mean for each fuel column (N,)
+    sigma = data.std(axis=0, ddof=1) # calculate the std for each fuel column (N,)
+    sigma[sigma == 0] = 1.0  # if std is 0 (no variation), set to 1 to avoid dividing by zero
 
     z = (data - mu) / sigma
     return pd.DataFrame(z, columns=ALL_FUELS, index=df["timestamp"])
@@ -106,7 +106,7 @@ def calc_fuel_shares(df):
     """
     data = df[ALL_FUELS].to_numpy(dtype=float)
     row_totals = data.sum(axis=1, keepdims=True)
-    row_totals[row_totals == 0] = 1.0
+    row_totals[row_totals == 0] = 1.0 # if a row total is 0, set to 1 to avoid dividing by zero
 
     shares = data / row_totals * 100
     return pd.DataFrame(shares, columns=ALL_FUELS, index=df["timestamp"])
